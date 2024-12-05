@@ -39,7 +39,8 @@ print(course.positive, course.average_stars, len(course.reviews))
 ```
 
 ## Формула подсчета total score
-![image](https://github.com/user-attachments/assets/b68cef86-2ac1-4134-9a8c-001047c6bfd0)
+![image](https://github.com/user-attachments/assets/b5ba8c2c-f356-4a3d-8a7b-d78c0ea4c52d)
+
 
 
 ## Цели проекта
