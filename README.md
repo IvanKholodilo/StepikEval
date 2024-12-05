@@ -38,7 +38,7 @@ print(info)
 print(course.positive, course.average_stars, len(course.reviews))
 ```
 
-## Формула подсчета total score
+## Формула подсчета total_score
 ![image](https://github.com/user-attachments/assets/695d535d-32f6-4477-96ad-1e5afb86456a)
 
 
