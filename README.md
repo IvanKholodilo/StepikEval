@@ -27,9 +27,19 @@
 
 Также реализован готовый класс взаимодействия с моделью. Пример использования класса можно найти в файле `example.py`.
 
-## Формула подсчета рейтинга
+## Пример использования (example.py)
 
-![Формула подсчета рейтинга](https://github.com/user-attachments/assets/47f58587-19fc-4ac5-8462-cb51fcb5c2db)
+```python
+from StepikEval import CourseClassifier, Course
+
+course = Course(CourseClassifier())
+info = course.get_info('https://stepik.org/course/56237')
+print(info)
+print(course.positive, course.average_stars, len(course.reviews))
+```
+
+## Формула подсчета total score
+![image](https://github.com/user-attachments/assets/b68cef86-2ac1-4134-9a8c-001047c6bfd0)
 
 
 ## Цели проекта
@@ -44,3 +54,7 @@
 
 ```bash
 pip install -r requirements.txt
+```
+
+Citations:
+[1] https://stepik.org/course/56237
