@@ -132,7 +132,7 @@ class Course():
                                 i = 0
                         except Exception as exp:
                             print('У span нет класса', exp)
-        
+                
         tech = 0
         for rew, star in zip(self.reviews, stars_parsed):
             rew.stars = star
@@ -141,9 +141,6 @@ class Course():
             self.total_score = self.total_score + tech
             tech = 0
                 
-        self.total_score = 100 * ((((self.total_score / (self.detail_score * lenth)) / 6) + 1) / 2)
-        
-        return self.total_score
                 
     
 class CourseClassifier():
