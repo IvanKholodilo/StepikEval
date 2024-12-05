@@ -39,6 +39,9 @@ print(course.positive, course.average_stars, len(course.reviews))
 ```
 
 ## Формула подсчета total_score
+p - positive score
+n - negative score
+q - scores (list of course features)
 ![image](https://github.com/user-attachments/assets/695d535d-32f6-4477-96ad-1e5afb86456a)
 
 
