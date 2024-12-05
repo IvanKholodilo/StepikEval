@@ -111,12 +111,6 @@ class Course():
         self.positive = self.positive / lenth
         self.average_stars = float(bs.find_all('span', {'class': 'course-promo-summary__average'})[0].contents[0])
         
-        print(self.detail_score, self.deep_score, self.material_quality_score,
-              self.problems_quality_score, self.coach_skills_score, self.practice_experience_score,
-              self.feedback_score)
-        print(self.average_stars)
-        print(self.negative, self.positive)
-        
         stars_parsed = []
         summ = 0
         i = 0
@@ -138,8 +132,6 @@ class Course():
                                 i = 0
                         except Exception as exp:
                             print('У span нет класса', exp)
-                
-        print(len(stars_parsed) == len(self.reviews))
         
         tech = 0
         for rew, star in zip(self.reviews, stars_parsed):
@@ -150,8 +142,8 @@ class Course():
             tech = 0
                 
         self.total_score = 100 * ((((self.total_score / (self.detail_score * lenth)) / 6) + 1) / 2)
-        print(self.total_score)
-        print(len(self.reviews))
+        
+        return self.total_score
                 
     
 class CourseClassifier():
