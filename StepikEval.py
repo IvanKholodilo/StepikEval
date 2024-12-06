@@ -134,15 +134,18 @@ class Course:
 
         self.average_stars = sum(stars_parsed) / len(stars_parsed)
 
-        tech = 0
-        for rew, star in zip(self.reviews, stars_parsed):
-            rew.stars = star
-            for i in range(1, 7):
-                tech = rew.scores[i] * (rew.emotions[1] - rew.emotions[0]) * rew.scores[0] + tech
-            self.total_score = self.total_score + tech
+        if self.detail_score != 0:
             tech = 0
-
-        self.total_score = 100 * ((((self.total_score / (self.detail_score * lenth)) / 6) + 1) / 2)
+            for rew, star in zip(self.reviews, stars_parsed):
+                rew.stars = star
+                for i in range(1, 7):
+                    tech = rew.scores[i] * (rew.emotions[1] - rew.emotions[0]) * rew.scores[0] + tech
+                self.total_score = self.total_score + tech
+                tech = 0
+    
+            self.total_score = 100 * ((((self.total_score / (self.detail_score * lenth)) / 6) + 1) / 2)
+        else:
+            self.total_score = 0
 
         return self.total_score
 
