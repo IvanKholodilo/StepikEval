@@ -139,8 +139,8 @@ class Course:
             for rew, star in zip(self.reviews, stars_parsed):
                 rew.stars = star
                 for i in range(1, 7):
-                    tech = rew.scores[i] * (rew.emotions[1] - rew.emotions[0]) * rew.scores[0] + tech
-                self.total_score = self.total_score + tech
+                    tech = rew.scores[i] + tech
+                self.total_score = self.total_score + tech * (rew.emotions[1] - rew.emotions[0]) * rew.scores[0]
                 tech = 0
     
             self.total_score = 100 * ((((self.total_score / (self.detail_score * lenth)) / 6) + 1) / 2)
