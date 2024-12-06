@@ -33,8 +33,8 @@
 from StepikEval import CourseClassifier, Course
 
 course = Course(CourseClassifier())
-info = course.get_info('https://stepik.org/course/56237')
-print(info)
+total_score = course.get_info('https://stepik.org/course/56237')
+print(total_score)
 print(course.positive, course.average_stars, len(course.reviews))
 ```
 
