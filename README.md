@@ -70,7 +70,7 @@ p - positive score
 n - negative score
 q - scores (list of course features)
 
-![formula_full](https://github.com/user-attachments/assets/b3a9f74a-33cd-4cb7-8282-8463b4fb8351)
+![formula_full](https://github.com/user-attachments/assets/1580e117-d30e-495c-a1a8-de062a84fe4d)
 
 f_max = 6 (значение функции при подстановки значений для самого хорошего отзыва)
 
