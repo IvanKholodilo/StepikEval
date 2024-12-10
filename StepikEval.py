@@ -8,21 +8,21 @@ from time import sleep
 from bs4 import BeautifulSoup
 from translators import translate_text
 
-
 class Review():
     def __init__(self):
         self.scores = []
         self.emotions = []
         self.stars = []
-
-
-class Course:
+    
+    
+    
+class Course():
     def __init__(self, classifier):
         self.reviews = []
         self.classifier = classifier
-
+        
         self.average_stars = None
-
+        
         self.total_score = None
         self.detail_score = None
         self.deep_score = None
@@ -31,13 +31,20 @@ class Course:
         self.coach_skills_score = None
         self.practice_experience_score = None
         self.feedback_score = None
-
+        
         self.positive = None
         self.negative = None
-
+        self.positive_part = None
+        self.negative_part = None
+        self.important_positive_part = None
+        self.important_negative_part = None
+        
+        self.important_rews_amount = None
+        self.important_rews_part = None
+        
     def get_info(self, url: str):
         self.average_stars = 0
-
+        
         self.total_score = 0
         self.detail_score = 0
         self.deep_score = 0
@@ -46,36 +53,44 @@ class Course:
         self.coach_skills_score = 0
         self.practice_experience_score = 0
         self.feedback_score = 0
-
+        
         self.positive = 0
         self.negative = 0
+        self.positive_part = 0
+        self.negative_part = 0
+        self.important_positive_part = 0
+        self.important_negative_part = 0
+        
+        self.important_rews_amount = 0
+        self.important_rews_part = 0
+        
         options = Options()
         options.add_argument("--headless")
         browser = webdriver.Firefox(options=options)
         browser.get(url)
         sleep(3)
-        button = browser.find_elements(By.CSS_SELECTOR,
-                                       "button:not(.st-button_style_none).btn-details")[-1]
+        button = browser.find_elements(By.CSS_SELECTOR, 
+                                      "button:not(.st-button_style_none).btn-details")[-1]
         try:
             while button.text == 'Показать ещё':
                 try:
                     sleep(0.02)
-                    button = browser.find_elements(By.CSS_SELECTOR,
-                                                   "button:not(.st-button_style_none).btn-details")[-1]
+                    button = browser.find_elements(By.CSS_SELECTOR, 
+                                        "button:not(.st-button_style_none).btn-details")[-1]
                     if button.text == 'Показать ещё':
                         button.click()
                     else:
                         break
-
+                        
                 except Exception as exp:
                     print(exp)
                     break
         except Exception as exp:
             print(exp)
-
+            
         html = browser.page_source
         browser.close()
-
+        
         bs = BeautifulSoup(html, 'html.parser')
         rews = bs.find_all('div', {'class': 'show-more__content'})
         for rev in rews:
@@ -85,6 +100,8 @@ class Course:
                 emotions = self.classifier.predict_emotions(rev.contents[0])[0]
                 review.scores = scores
                 review.emotions = emotions
+                if scores[0] >= 0.5:
+                    self.important_rews_amount = self.important_rews_amount + 1
                 self.detail_score = self.detail_score + scores[0]
                 self.deep_score = self.deep_score + scores[1]
                 self.material_quality_score = self.material_quality_score + scores[2]
@@ -94,22 +111,36 @@ class Course:
                 self.feedback_score = self.feedback_score + scores[6]
                 self.negative = self.negative + emotions[0]
                 self.positive = self.positive + emotions[1]
+                if emotions[0] > emotions[1]:
+                    self.negative_part = self.negative_part + 1
+                    if scores[0] >= 0.5:
+                        self.important_negative_part = self.important_negative_part + 1
+                else:
+                    self.positive_part = self.positive_part + 1
+                    if scores[0] >= 0.5:
+                        self.important_positive_part = self.important_positive_part + 1
                 self.reviews.append(review)
             except Exception as exp:
                 continue
-
-        lenth = len(self.reviews)
-        self.detail_score = self.detail_score / lenth
+            
+        lenth = len(self.reviews)   
+        self.detail_score = self.detail_score / lenth    
         self.deep_score = self.deep_score / lenth
         self.material_quality_score = self.material_quality_score / lenth
         self.problems_quality_score = self.problems_quality_score / lenth
         self.coach_skills_score = self.coach_skills_score / lenth
         self.practice_experience_score = self.practice_experience_score / lenth
         self.feedback_score = self.feedback_score / lenth
-
+        
         self.negative = self.negative / lenth
         self.positive = self.positive / lenth
-
+        self.negative_part = self.negative_part / lenth
+        self.positive_part = self.positive_part / lenth
+        self.important_positive_part = self.important_positive_part / self.important_rews_amount
+        self.important_negative_part = self.important_negative_part / self.important_rews_amount
+        
+        self.important_rews_part = self.important_rews_amount / lenth
+        
         stars_parsed = []
         summ = 0
         i = 0
@@ -131,35 +162,30 @@ class Course:
                                 i = 0
                         except Exception as exp:
                             print('У span нет класса', exp)
-
+                            
         self.average_stars = sum(stars_parsed) / len(stars_parsed)
-
-        if self.detail_score != 0:
+        
+        tech = 0
+        for rew, star in zip(self.reviews, stars_parsed):
+            rew.stars = star
+            for i in range(1, 7):
+                tech = rew.scores[i] + tech
+            self.total_score = self.total_score + tech * (rew.emotions[1] - rew.emotions[0]) * rew.scores[0]
             tech = 0
-            for rew, star in zip(self.reviews, stars_parsed):
-                rew.stars = star
-                for i in range(1, 7):
-                    tech = rew.scores[i] + tech
-                self.total_score = self.total_score + tech * (rew.emotions[1] - rew.emotions[0]) * rew.scores[0]
-                tech = 0
-    
-            self.total_score = 100 * ((((self.total_score / (self.detail_score * lenth)) / 6) + 1) / 2)
-        else:
-            self.total_score = 0
-
+                
+        self.total_score = 100 * ((((self.total_score / (self.detail_score * lenth)) / 6) + 1) / 2)
+        
         return self.total_score
-
-
-class CourseClassifier:
+                
+    
+class CourseClassifier():
     def __init__(self):
         bert_model = AutoModel.from_pretrained('cointegrated/rubert-tiny2')
         self.model = TextClassifier(bert_model)
-        self.model.load_state_dict(
-            torch.load('models/categories.pth', weights_only=False, map_location=torch.device('cpu')))
+        self.model.load_state_dict(torch.load('models/categories.pth', weights_only=False, map_location=torch.device('cpu')))
         self.model.eval()
-        self.binary_model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=2)
-        self.binary_model.load_state_dict(
-            torch.load('models/binary.pth', weights_only=False, map_location=torch.device('cpu')))
+        self.binary_model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=2) 
+        self.binary_model.load_state_dict(torch.load('models/binary.pth', weights_only=False, map_location=torch.device('cpu')))
         self.binary_model.eval()
         self.tokenizer = AutoTokenizer.from_pretrained('cointegrated/rubert-tiny2')
         self.eng_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
@@ -169,7 +195,7 @@ class CourseClassifier:
             text,
             truncation=True,
             padding=True,
-            max_length=512,
+            max_length=512, 
             return_tensors='pt'
         )
         input_ids = torch.tensor(encodings["input_ids"])
@@ -180,16 +206,16 @@ class CourseClassifier:
 
         if isinstance(output, tuple):
             output = output[0]
-
+            
         return torch.sigmoid(output).tolist()
-
+    
     def predict_emotions(self, text: str):
-        text = translate_text(text, to_language='en')
+        text = translate_text(text, to_language = 'en')
         encodings = self.eng_tokenizer(
             text,
             truncation=True,
             padding=True,
-            max_length=512,
+            max_length=512, 
             return_tensors='pt'
         )
         input_ids = torch.tensor(encodings["input_ids"])
@@ -200,7 +226,7 @@ class CourseClassifier:
 
         if isinstance(output, tuple):
             output = output[0]
-
+            
         return torch.sigmoid(output.logits).tolist()
 
 
@@ -223,3 +249,5 @@ class TextClassifier(torch.nn.Module):
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)
         return logits
+    
+print(Course(CourseClassifier()).get_info('https://stepik.org/course/56237'))
