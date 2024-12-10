@@ -72,7 +72,7 @@ p - positive score for each review (list of positive probabilities)
 
 n - negative score for each review (list of negative probabilities)
 
-q - scores (list of course features lists)
+q - scores (list of courses features lists)
 
 ![formula_full](https://github.com/user-attachments/assets/1580e117-d30e-495c-a1a8-de062a84fe4d)
 
