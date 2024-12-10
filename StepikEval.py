@@ -12,7 +12,7 @@ class Review():
     def __init__(self):
         self.scores = []
         self.emotions = []
-        self.stars = []
+        self.stars = None
     
     
     
@@ -168,6 +168,7 @@ class Course():
         tech = 0
         for rew, star in zip(self.reviews, stars_parsed):
             rew.stars = star
+            print(star)
             for i in range(1, 7):
                 tech = rew.scores[i] + tech
             self.total_score = self.total_score + tech * (rew.emotions[1] - rew.emotions[0]) * rew.scores[0]
@@ -249,5 +250,3 @@ class TextClassifier(torch.nn.Module):
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)
         return logits
-    
-print(Course(CourseClassifier()).get_info('https://stepik.org/course/56237'))
