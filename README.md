@@ -64,7 +64,7 @@ n - negative score
 q - scores (list of course features)
 ![formula_full](https://github.com/user-attachments/assets/555213f2-a49e-4faa-a33a-695382738340)
 
-
+f_max = 6 (значение функции при подстановки значений для самого хорошего отзыва)
 
 
 ## Цели проекта
