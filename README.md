@@ -74,7 +74,7 @@ n - negative score for each review (list of negative probabilities)
 
 q - scores (list of courses features lists)
 
-![formula_full](https://github.com/user-attachments/assets/1580e117-d30e-495c-a1a8-de062a84fe4d)
+![formula_full](https://github.com/user-attachments/assets/31582f4f-2bc3-423b-bf95-13356e382953)
 
 f_max = 6 (значение функции при подстановки значений для самого хорошего отзыва)
 
