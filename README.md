@@ -55,14 +55,14 @@ print(course.positive, course.average_stars, len(course.reviews))
    * negative_part - доля негативных отзывов от их общего количества (число float от 0 до 1);
    * important_positive_part - доля полезных позитивных отзывов от общего количества полезных отзывов (число float от 0 до 1);
    * important_negative_part - доля полезных негативных отзывов от общего количества полезных отзывов (число float от 0 до 1);
-   * important_rews_part - доля полезных отзывов от общего количества отзывов (число float от 0 до 1);
+   * important_rews_part - доля полезных отзывов от общего количества отзывов (число float от 0 до 1).
 
 
 ## Формула подсчета total_score
 p - positive score
 n - negative score
 q - scores (list of course features)
-![image](https://github.com/user-attachments/assets/695d535d-32f6-4477-96ad-1e5afb86456a)
+![formula_full](https://github.com/user-attachments/assets/555213f2-a49e-4faa-a33a-695382738340)
 
 
 
