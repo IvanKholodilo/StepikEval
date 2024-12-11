@@ -68,11 +68,13 @@ print(course.positive, course.average_stars, len(course.reviews))
 
 ## Формула подсчета total_score
 
-p - positive score for each review (list of positive probabilities)
+p - positive score for each review (list of positive probabilities);
 
-n - negative score for each review (list of negative probabilities)
+n - negative score for each review (list of negative probabilities);
 
-q - scores (list of courses features lists)
+q - scores (list of courses features lists);
+
+n - amount of reviews.
 
 ![formula_full](https://github.com/user-attachments/assets/31582f4f-2bc3-423b-bf95-13356e382953)
 
