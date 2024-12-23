@@ -76,7 +76,7 @@ q - scores (list of courses features lists);
 
 n - amount of reviews.
 
-![formula_full](https://github.com/user-attachments/assets/31582f4f-2bc3-423b-bf95-13356e382953)
+![formula_full](https://github.com/user-attachments/assets/32637cba-ffa5-4823-b547-ded4b780d6c2)
 
 f_max = 6 (значение функции при подстановки значений для самого хорошего отзыва)
 
