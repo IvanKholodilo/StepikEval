@@ -1,4 +1,5 @@
 import torch
+from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModel
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from selenium import webdriver
@@ -8,21 +9,21 @@ from time import sleep
 from bs4 import BeautifulSoup
 from translators import translate_text
 
+
 class Review():
     def __init__(self):
         self.scores = []
         self.emotions = []
         self.stars = None
-    
-    
-    
+
+
 class Course():
     def __init__(self, classifier):
         self.reviews = []
         self.classifier = classifier
-        
+
         self.average_stars = None
-        
+
         self.total_score = None
         self.detail_score = None
         self.deep_score = None
@@ -31,20 +32,20 @@ class Course():
         self.coach_skills_score = None
         self.practice_experience_score = None
         self.feedback_score = None
-        
+
         self.positive = None
         self.negative = None
         self.positive_part = None
         self.negative_part = None
         self.important_positive_part = None
         self.important_negative_part = None
-        
+
         self.important_rews_amount = None
         self.important_rews_part = None
-        
+
     def get_info(self, url: str):
         self.average_stars = 0
-        
+
         self.total_score = 0
         self.detail_score = 0
         self.deep_score = 0
@@ -53,48 +54,48 @@ class Course():
         self.coach_skills_score = 0
         self.practice_experience_score = 0
         self.feedback_score = 0
-        
+
         self.positive = 0
         self.negative = 0
         self.positive_part = 0
         self.negative_part = 0
         self.important_positive_part = 0
         self.important_negative_part = 0
-        
+
         self.important_rews_amount = 0
         self.important_rews_part = 0
-        
+
         options = Options()
         options.add_argument("--headless")
         browser = webdriver.Firefox(options=options)
         browser.get(url)
         sleep(3)
-        button = browser.find_elements(By.CSS_SELECTOR, 
-                                      "button:not(.st-button_style_none).btn-details")[-1]
+        button = browser.find_elements(By.CSS_SELECTOR,
+                                       "button:not(.st-button_style_none).btn-details")[-1]
         try:
             while button.text == 'Показать ещё':
                 try:
                     sleep(0.02)
-                    button = browser.find_elements(By.CSS_SELECTOR, 
-                                        "button:not(.st-button_style_none).btn-details")[-1]
+                    button = browser.find_elements(By.CSS_SELECTOR,
+                                                   "button:not(.st-button_style_none).btn-details")[-1]
                     if button.text == 'Показать ещё':
                         button.click()
                     else:
                         break
-                        
+
                 except Exception as exp:
                     print(exp)
                     break
         except Exception as exp:
             print(exp)
-            
+
         html = browser.page_source
         browser.close()
-        
+
         bs = BeautifulSoup(html, 'html.parser')
         rews = bs.find_all('div', {'class': 'show-more__content'})
         global_exeption = None
-        for rev in rews:
+        for rev in tqdm(rews, desc='Prediction reviews'):
             try:
                 review = Review()
                 scores = self.classifier.predict_scores(rev.contents[0])[0]
@@ -124,26 +125,26 @@ class Course():
             except Exception as exp:
                 global_exeption = exp
                 continue
-            
+
         try:
-            lenth = len(self.reviews)   
-            self.detail_score = self.detail_score / lenth    
+            lenth = len(self.reviews)
+            self.detail_score = self.detail_score / lenth
             self.deep_score = self.deep_score / lenth
             self.material_quality_score = self.material_quality_score / lenth
             self.problems_quality_score = self.problems_quality_score / lenth
             self.coach_skills_score = self.coach_skills_score / lenth
             self.practice_experience_score = self.practice_experience_score / lenth
             self.feedback_score = self.feedback_score / lenth
-            
+
             self.negative = self.negative / lenth
             self.positive = self.positive / lenth
             self.negative_part = self.negative_part / lenth
             self.positive_part = self.positive_part / lenth
             self.important_positive_part = self.important_positive_part / self.important_rews_amount
             self.important_negative_part = self.important_negative_part / self.important_rews_amount
-            
+
             self.important_rews_part = self.important_rews_amount / lenth
-            
+
             stars_parsed = []
             summ = 0
             i = 0
@@ -165,9 +166,9 @@ class Course():
                                     i = 0
                             except Exception as exp:
                                 print('У span нет класса', exp)
-                                
+
             self.average_stars = sum(stars_parsed) / len(stars_parsed)
-            
+
             tech = 0
             for rew, star in zip(self.reviews, stars_parsed):
                 rew.stars = star
@@ -175,24 +176,26 @@ class Course():
                     tech = rew.scores[i] + tech
                 self.total_score = self.total_score + tech * (rew.emotions[1] - rew.emotions[0]) * rew.scores[0]
                 tech = 0
-                    
+
             self.total_score = 100 * ((((self.total_score / (self.detail_score * lenth)) / 6) + 1) / 2)
-            
+
             return self.total_score
         except Exception as exp:
             print('Ошибка.', exp)
             return global_exeption
-                
-    
+
+
 class CourseClassifier():
     def __init__(self):
-        model_name = "cointegrated/rubert-tiny2"  
-        num_labels = 7  
+        model_name = "cointegrated/rubert-tiny2"
+        num_labels = 7
         self.model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=num_labels)
-        self.model.load_state_dict(torch.load('models/categories.pth', weights_only=False, map_location=torch.device('cpu')))
+        self.model.load_state_dict(
+            torch.load('models/categories.pth', weights_only=False, map_location=torch.device('cpu')))
         self.model.eval()
-        self.binary_model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=2) 
-        self.binary_model.load_state_dict(torch.load('models/binary.pth', weights_only=False, map_location=torch.device('cpu')))
+        self.binary_model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=2)
+        self.binary_model.load_state_dict(
+            torch.load('models/binary.pth', weights_only=False, map_location=torch.device('cpu')))
         self.binary_model.eval()
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.eng_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
@@ -202,10 +205,10 @@ class CourseClassifier():
             text,
             truncation=True,
             padding=True,
-            max_length=512, 
+            max_length=512,
             return_tensors='pt'
         )
-        input_ids = torch.tensor(encodings["input_ids"])
+        input_ids = encodings["input_ids"].clone().detach()
         attention_mask = encodings['attention_mask']
         output = None
         with torch.no_grad():
@@ -213,19 +216,19 @@ class CourseClassifier():
 
         if isinstance(output, tuple):
             output = output[0]
-            
+
         return torch.sigmoid(output.logits).tolist()
-    
+
     def predict_emotions(self, text: str):
-        text = translate_text(text, to_language = 'en')
+        text = translate_text(text, to_language='en')
         encodings = self.eng_tokenizer(
             text,
             truncation=True,
             padding=True,
-            max_length=512, 
+            max_length=512,
             return_tensors='pt'
         )
-        input_ids = torch.tensor(encodings["input_ids"])
+        input_ids = encodings["input_ids"].clone().detach()
         attention_mask = encodings['attention_mask']
         output = None
         with torch.no_grad():
@@ -233,5 +236,5 @@ class CourseClassifier():
 
         if isinstance(output, tuple):
             output = output[0]
-            
+
         return torch.sigmoid(output.logits).tolist()
