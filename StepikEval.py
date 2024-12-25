@@ -44,6 +44,7 @@ class Course:
         self.important_rews_part = None
 
     def get_info(self, url: str):
+        self.reviews.clear()
         self.average_stars = 0
 
         self.total_score = 0
