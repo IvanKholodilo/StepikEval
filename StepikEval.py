@@ -196,7 +196,7 @@ class Course:
                     tech = 0
 
                 self.total_score = 100 * ((((self.total_score / (self.detail_score * lenth)) / 6) + 1) / 2)
-                print(f"время оценки {time.time()-x}")
+                print(f"Время оценки: {time.time()-x}")
                 return self.total_score
             except Exception as exp:
                 print('Ошибка.', exp)
