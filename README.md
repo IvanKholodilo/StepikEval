@@ -113,3 +113,4 @@ pip install -r requirements.txt
 Citations:
 [1] https://stepik.org/course/56237
 [2] https://www.kaggle.com/datasets/kritanjalijain/amazon-reviews
+[3] https://github.com/IvanKholodilo/Stepik-Courses-Rating
