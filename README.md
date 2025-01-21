@@ -72,7 +72,7 @@ p - positive score for each review (list of positive probabilities);
 
 n - negative score for each review (list of negative probabilities);
 
-q - scores (list of courses features lists);
+Q - scores (list of courses features lists);
 
 n - amount of reviews.
 
