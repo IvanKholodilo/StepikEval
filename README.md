@@ -76,7 +76,7 @@ q - scores (list of courses features lists);
 
 n - amount of reviews.
 
-![formula_full](https://github.com/user-attachments/assets/8441fc29-abda-43a1-89cf-95a43c48bff6)
+![formula_full](https://github.com/user-attachments/assets/6933fd70-42d0-44bf-9cb4-a7a19be92505)
 
 f_max = 6 (значение функции при подстановки значений для самого хорошего отзыва)
 
@@ -88,7 +88,7 @@ f_max = 6 (значение функции при подстановки зна�
 
 * Так же при подсчёте total_score и остальных важных метрик курса можно использовать вероятность того, накручен отзыв или нет, создав соответствующую для этого модель.
 
-![formula_full](https://github.com/user-attachments/assets/c3f0de08-4563-4776-856a-d10b68facd4e)
+![photo_2024-12-22_11-35-03](https://github.com/user-attachments/assets/a7af5575-f647-4a57-97af-cbead1d61645)
 
 ## Цели проекта
 
