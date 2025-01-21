@@ -88,7 +88,7 @@ f_max = 6 (значение функции при подстановки зна�
 
 * Так же при подсчёте total_score и остальных важных метрик курса можно использовать вероятность того, накручен отзыв или нет, создав соответствующую для этого модель.
 
-![image](https://github.com/user-attachments/assets/aa3d47d9-2526-42d9-be3c-2b33d66bfde4)
+![formula_full](https://github.com/user-attachments/assets/c3f0de08-4563-4776-856a-d10b68facd4e)
 
 ## Цели проекта
 
