@@ -1,6 +1,6 @@
 import time
 from time import sleep
-
+from datetime import datetime
 import torch
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -14,6 +14,7 @@ class Review:
     def __init__(self):
         self.scores = []
         self.emotions = []
+        self.timestamp = None
         self.stars = None
 
 
@@ -97,7 +98,9 @@ class Course:
 
         bs = BeautifulSoup(html, 'html.parser')
         rews = bs.find_all('div', {'class': 'show-more__content'})
+        dates = bs.find_all('time', {'class': 'course-review-card__date'})
         global_exeption = None
+        stamps = []
         
         vect_7_ids = []
         vect_7_masks = []
@@ -105,8 +108,10 @@ class Course:
         vect_emotions_masks = []
         x = time.time()
         text = []
-        for rev in rews:
+        for rev, date in zip(rews, dates):
             try:
+                dt = datetime.strptime(date['datetime'], '%Y-%m-%dT%H:%M:%S.%fZ')
+                stamps.append(datetime.timestamp(dt))
                 text.append(rev.contents[0])
                 self.reviews.append(Review())
             except Exception as exp:
@@ -121,9 +126,10 @@ class Course:
             output_data_for7 = self.classifier.predict_stack(vect_7_ids, vect_7_masks)
             output_data_for_emotions = self.classifier.predict_stack_emotions(vect_emotions_ids, vect_emotions_masks)
             
-            for scores, emotions, review in zip(output_data_for7, output_data_for_emotions, self.reviews):
+            for scores, emotions, review, stamp in zip(output_data_for7, output_data_for_emotions, self.reviews, stamps):
                 review.scores = scores
                 review.emotions = emotions
+                review.timestamp = stamp
                 if scores[0] >= 0.5:
                     self.important_rews_amount = self.important_rews_amount + 1
                 self.detail_score = self.detail_score + scores[0]
